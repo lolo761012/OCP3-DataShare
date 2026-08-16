@@ -1,0 +1,11 @@
+# DataShare uploaded files
+storage/files/*
+!storage/files/.gitkeep
+
+# Local environment / secrets
+.env
+
+# IDE / OS
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+﻿services:
+  postgres:
+    image: postgres:16
+    container_name: datashare-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: datashare
+      POSTGRES_USER: datashare
+      POSTGRES_PASSWORD: datashare
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - datashare_pgdata:/var/lib/postgresql/data
+
+volumes:
+  datashare_pgdata:
