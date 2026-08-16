@@ -4,7 +4,7 @@
 flowchart LR
     U[Utilisateur / Navigateur]
     F[Frontend Angular 22]
-    B[Backend Spring Boot 3.5<br/>Java 21<br/>API REST]
+    B[Backend Spring Boot 4.1.0<br/>Java 21<br/>API REST]
     DB[(PostgreSQL<br/>Métadonnées et historique)]
     FS[(Stockage local<br/>Contenu des fichiers)]
     JWT[Spring Security<br/>JWT]
