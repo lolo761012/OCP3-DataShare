@@ -4,6 +4,7 @@ import com.openclassrooms.datashare.exception.EmailAlreadyUsedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,6 +61,18 @@ public class RestExceptionHandler {
         );
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorDetails> handleMessageNotReadable(
+            HttpMessageNotReadableException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Malformed JSON request",
+                request
+        );
+    }
+
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<ErrorDetails> handleBadRequest(
             RuntimeException exception,
@@ -83,6 +96,7 @@ public class RestExceptionHandler {
                 request
         );
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleUnexpectedException(
             Exception exception,
@@ -105,7 +119,7 @@ public class RestExceptionHandler {
         ErrorDetails details = new ErrorDetails(
                 LocalDateTime.now(),
                 message,
-                request.getDescription(false)
+                request.getDescription(false).replace("uri=", "")
         );
 
         return ResponseEntity.status(status).body(details);

@@ -54,7 +54,8 @@ class AuthControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details").value(REGISTER_URL));
     }
 
     @Test
@@ -120,6 +121,17 @@ class AuthControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void register_malformedJson_returns400() throws Exception {
+        mockMvc.perform(post(REGISTER_URL)
+                        .content("{ invalid json")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details").value(REGISTER_URL));
+    }
+
+    @Test
     void login_success_returns200WithToken() throws Exception {
         registerUser();
 
@@ -149,7 +161,8 @@ class AuthControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.details").value(LOGIN_URL));
     }
 
     @Test
@@ -176,5 +189,16 @@ class AuthControllerTest extends AbstractIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void login_malformedJson_returns400() throws Exception {
+        mockMvc.perform(post(LOGIN_URL)
+                        .content("{ invalid json")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details").value(LOGIN_URL));
     }
 }
