@@ -1,155 +1,103 @@
-\# DataShare
-
+# DataShare
 
 
 Application de partage temporaire et sécurisé de fichiers réalisée dans le cadre du projet 3 de la formation \*\*OpenClassrooms Expert DevOps\*\*.
 
 
-
-\## Stack technique
-
+## Stack technique
 
 
-\- \*\*Frontend\*\* : Angular 22
-
-\- \*\*Backend\*\* : Java 21 / Spring Boot 4.1
-
-\- \*\*Base de données\*\* : PostgreSQL 16
-
-\- \*\*Build backend\*\* : Maven Wrapper
-
-\- \*\*Conteneurisation BDD\*\* : Docker Compose
-
-\- \*\*Stockage des fichiers\*\* : système de fichiers local
-
-\- \*\*Authentification\*\* : JWT
+- \*\*Frontend\*\* : Angular 22
+- \*\*Backend\*\* : Java 21 / Spring Boot 4.1
+- \*\*Base de données\*\* : PostgreSQL 16
+- \*\*Build backend\*\* : Maven Wrapper
+- \*\*Conteneurisation BDD\*\* : Docker Compose
+- \*\*Stockage des fichiers\*\* : système de fichiers local
+- \*\*Authentification\*\* : JWT
 
 
-
-\## Prérequis
-
+## Prérequis
 
 
 Les outils suivants doivent être installés :
 
 
-
-\- Java 21
-
-\- Node.js 24
-
-\- npm
-
-\- Docker Desktop
-
-\- Git
-
-\- PowerShell
-
+- Java 21
+- Node.js 24
+- npm
+- Docker Desktop
+- Git
+- PowerShell
 
 
 Maven global n'est pas nécessaire pour le backend : le projet utilise le \*\*Maven Wrapper\*\* (`mvnw.cmd`).
 
 
-
-\## Installation locale - Windows / PowerShell
-
+## Installation locale - Windows / PowerShell
 
 
 Cette procédure de développement local a été validée sous Windows 11 avec PowerShell.
 
 
-
 Cloner le dépôt puis se placer à sa racine :
 
 
-
 ```powershell
-
 git clone https://github.com/lolo761012/OCP3-DataShare.git
-
 cd OCP3-DataShare
-
 ```
-
 
 
 Installer les dépendances du frontend :
 
 
-
 ```powershell
-
 cd frontend
-
 npm install
-
 cd ..
-
 ```
-
 
 
 Le backend téléchargera automatiquement les dépendances Maven nécessaires lors du premier lancement.
 
 
-
-\## Démarrage en développement
-
+## Démarrage en développement
 
 
-\### Méthode recommandée
-
+### Méthode recommandée
 
 
 Depuis la racine du projet :
 
 
-
 ```powershell
-
 .\\scripts\\dev.ps1 start
-
 ```
-
 
 
 Le script démarre :
 
 
-
 1\. PostgreSQL avec Docker Compose ;
-
 2\. le backend Spring Boot ;
-
 3\. le frontend Angular.
-
 
 
 Lorsque les composants sont disponibles, le script affiche :
 
 
-
 ```text
-
 PostgreSQL: UP
-
 Backend: UP
-
 Frontend: UP
-
 DataShare is ready.
-
 ```
 
 
-
-\## Vérification de l'état
-
+## Vérification de l'état
 
 
 ```powershell
-
 .\\scripts\\dev.ps1 status
 
 ```
@@ -256,7 +204,7 @@ npm start
 
 
 
-\### Arrêt manuel
+### Arrêt manuel
 
 
 
@@ -272,18 +220,28 @@ docker compose down
 
 
 
-\## URLs de développement
+## URLs de développement
 
 
 
-\- Frontend : http://localhost:4200
+- Frontend : http://localhost:4200
 
-\- Backend : http://localhost:8080
+- Backend : http://localhost:8080
 
-\- Health backend : http://localhost:8080/actuator/health
+- Health backend : http://localhost:8080/actuator/health
 
-\- PostgreSQL : `localhost:5432`
+- PostgreSQL : `localhost:5432`
 
+
+## Connexion à PostgreSQL
+
+La base PostgreSQL de développement tourne dans le conteneur Docker `datashare-postgres`.
+
+Depuis PowerShell :
+
+```powershell
+docker exec -it datashare-postgres psql -U datashare -d datashare
+```
 
 
 \## Configuration locale
