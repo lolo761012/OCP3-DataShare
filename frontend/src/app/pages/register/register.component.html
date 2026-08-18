@@ -1,0 +1,82 @@
+<app-header actionLabel="Se connecter" actionRoute="/login"></app-header>
+
+<div class="page-content">
+  <div class="auth-card">
+    <h2>Créer un compte</h2>
+
+    @if (loading()) {
+      <p class="status status-loading">Création en cours...</p>
+    }
+    @if (success()) {
+      <p class="status status-success">Compte créé avec succès. Vous pouvez vous connecter.</p>
+    }
+    @if (errorMessage()) {
+      <p class="status status-error">{{ errorMessage() }}</p>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Saisissez votre email..."
+          [class.is-invalid]="submitted && form['email'].errors"
+        />
+        @if (submitted && form['email'].errors) {
+          <div class="field-error">
+            @if (form['email'].errors?.['required']) {
+              <span>L'email est requis.</span>
+            }
+            @if (form['email'].errors?.['email']) {
+              <span>Format d'email invalide.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Saisissez votre mot de passe..."
+          [class.is-invalid]="submitted && form['password'].errors"
+        />
+        @if (submitted && form['password'].errors) {
+          <div class="field-error">
+            @if (form['password'].errors?.['required']) {
+              <span>Le mot de passe est requis.</span>
+            }
+            @if (form['password'].errors?.['minlength']) {
+              <span>8 caractères minimum.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Vérification du mot de passe</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Saisissez-le à nouveau..."
+          [class.is-invalid]="submitted && (form['confirmPassword'].errors || registerForm.errors?.['passwordsMismatch'])"
+        />
+        @if (submitted && form['confirmPassword'].errors?.['required']) {
+          <div class="field-error"><span>La confirmation est requise.</span></div>
+        }
+        @if (submitted && !form['confirmPassword'].errors?.['required'] && registerForm.errors?.['passwordsMismatch']) {
+          <div class="field-error"><span>Les mots de passe ne correspondent pas.</span></div>
+        }
+      </div>
+
+      <a routerLink="/login" class="link-secondary">J'ai déjà un compte</a>
+
+      <button type="submit" class="btn-submit" [disabled]="loading()">Créer mon compte</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<app-header actionLabel="Créer un compte" actionRoute="/register"></app-header>
+
+<div class="page-content">
+  <div class="auth-card">
+    <h2>Connexion</h2>
+
+    @if (loading()) {
+      <p class="status status-loading">Connexion en cours...</p>
+    }
+    @if (success()) {
+      <p class="status status-success">Connexion réussie.</p>
+    }
+    @if (errorMessage()) {
+      <p class="status status-error">{{ errorMessage() }}</p>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Saisissez votre email..."
+          [class.is-invalid]="submitted && form['email'].errors"
+        />
+        @if (submitted && form['email'].errors) {
+          <div class="field-error">
+            @if (form['email'].errors?.['required']) {
+              <span>L'email est requis.</span>
+            }
+            @if (form['email'].errors?.['email']) {
+              <span>Format d'email invalide.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Saisissez votre mot de passe..."
+          [class.is-invalid]="submitted && form['password'].errors"
+        />
+        @if (submitted && form['password'].errors?.['required']) {
+          <div class="field-error"><span>Le mot de passe est requis.</span></div>
+        }
+      </div>
+
+      <a routerLink="/register" class="link-secondary">Créer un compte</a>
+
+      <button type="submit" class="btn-submit" [disabled]="loading()">Connexion</button>
+    </form>
+  </div>
+</div>
