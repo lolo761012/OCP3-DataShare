@@ -1,5 +1,7 @@
 package com.openclassrooms.datashare.controller;
 
+import com.openclassrooms.datashare.dto.LoginRequestDTO;
+import com.openclassrooms.datashare.dto.LoginResponseDTO;
 import com.openclassrooms.datashare.dto.RegisterRequestDTO;
 import com.openclassrooms.datashare.dto.RegisterResponseDTO;
 import com.openclassrooms.datashare.entities.User;
@@ -36,5 +38,19 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userDtoMapper.toResponseDto(savedUser));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(
+            @Valid @RequestBody LoginRequestDTO request) {
+
+        String token = userService.login(
+                request.getEmail(),
+                request.getPassword()
+        );
+
+        return ResponseEntity.ok(
+                new LoginResponseDTO(token)
+        );
     }
 }

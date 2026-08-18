@@ -4,10 +4,12 @@ import com.openclassrooms.datashare.exception.EmailAlreadyUsedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,18 @@ public class RestExceptionHandler {
 
         return buildResponse(
                 HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handleBadCredentials(
+            BadCredentialsException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
                 exception.getMessage(),
                 request
         );
@@ -58,6 +72,17 @@ public class RestExceptionHandler {
         );
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorDetails> handleNoResourceFound(
+            NoResourceFoundException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "Resource not found",
+                request
+        );
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleUnexpectedException(
             Exception exception,

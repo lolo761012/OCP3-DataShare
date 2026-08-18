@@ -1,4 +1,6 @@
 ﻿spring:
+  config:
+    import: "optional:file:../.env[.properties]"
   application:
     name: datashare-backend
 
@@ -27,3 +29,7 @@ management:
 datashare:
   storage:
     path: ${DATASHARE_STORAGE_PATH:../storage/files}
+
+jwt:
+  secret-key: ${JWT_SECRET}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
