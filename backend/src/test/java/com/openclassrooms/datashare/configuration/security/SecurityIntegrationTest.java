@@ -85,14 +85,14 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
         mockMvc.perform(get(FILES_URL)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test
     void anonymousUpload_withoutToken_passesSecurity() throws Exception {
         mockMvc.perform(post(FILES_URL))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
