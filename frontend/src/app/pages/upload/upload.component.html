@@ -1,0 +1,117 @@
+<app-header></app-header>
+
+<div class="page-content">
+  @if (!selectedFile() && !uploadResult()) {
+    <div class="empty-state">
+      <p>Tu veux partager un fichier ?</p>
+      <button type="button" class="btn-circle" (click)="fileInput.click()" aria-label="Sélectionner un fichier">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M7 18a4 4 0 0 1-1-7.874A5.5 5.5 0 0 1 16.5 8h.5a4.5 4.5 0 0 1 1 8.9" />
+          <path d="M12 12v8" />
+          <path d="M9 15l3-3 3 3" />
+        </svg>
+      </button>
+    </div>
+  }
+
+  @if (selectedFile() && !uploadResult()) {
+    <div class="upload-card">
+      <h2>Ajouter un fichier</h2>
+
+      <div class="file-row">
+        <div class="file-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" />
+            <path d="M15 2v5h5" />
+          </svg>
+          <div>
+            <p class="file-name">{{ selectedFile()?.name }}</p>
+            @if (fileTooLarge()) {
+              <p class="file-error">La taille des fichiers est limitée à 1 Go</p>
+            } @else {
+              <p class="file-size">{{ formatFileSize(selectedFile()!.size) }}</p>
+            }
+          </div>
+        </div>
+        <button type="button" class="btn-outline" (click)="fileInput.click()">Changer</button>
+      </div>
+
+      @if (fileExtensionForbidden()) {
+        <p class="file-error">Ce type de fichier n'est pas autorisé.</p>
+      }
+
+      @if (errorMessage()) {
+        <p class="status-error">{{ errorMessage() }}</p>
+      }
+
+      <form [formGroup]="optionsForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Optionnel"
+            [class.is-invalid]="submitted && form['password'].errors"
+          />
+          @if (submitted && form['password'].errors?.['minlength']) {
+            <div class="field-error"><span>6 caractères minimum.</span></div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="expirationDays">Expiration</label>
+          <select id="expirationDays" formControlName="expirationDays">
+            @for (option of expirationOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="uploading() || fileTooLarge() || fileExtensionForbidden() || optionsForm.invalid"
+        >
+          {{ uploading() ? 'Envoi en cours...' : 'Téléverser' }}
+        </button>
+      </form>
+    </div>
+  }
+
+  @if (uploadResult(); as result) {
+    <div class="upload-card">
+      <h2>Ajouter un fichier</h2>
+
+      <div class="file-row">
+        <div class="file-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" />
+            <path d="M15 2v5h5" />
+          </svg>
+          <div>
+            <p class="file-name">{{ result.fileName }}</p>
+            <p class="file-size">{{ formatFileSize(result.size) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="success-message">
+        Félicitations, ton fichier sera conservé chez nous pendant {{ expirationPhrase() }} !
+      </p>
+
+      <p class="download-link">{{ downloadLink() }}</p>
+
+      <button type="button" class="btn-submit" (click)="copyLink()">
+        {{ linkCopied() ? 'Lien copié !' : 'Copier le lien' }}
+      </button>
+    </div>
+  }
+
+  <input
+    #fileInput
+    type="file"
+    class="hidden-input"
+    (change)="onFileSelected($event)"
+  />
+</div>
