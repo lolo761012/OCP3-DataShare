@@ -18,6 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+
 class SecurityIntegrationTest extends AbstractIntegrationTest {
 
     private static final String FILES_URL = "/api/files";
@@ -90,10 +92,10 @@ class SecurityIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void anonymousUpload_withoutToken_passesSecurity() throws Exception {
-        mockMvc.perform(post(FILES_URL))
-                .andDo(print())
+        mockMvc.perform(multipart(FILES_URL))
                 .andExpect(status().isBadRequest());
     }
+
 
     @Test
     void anonymousUpload_withInvalidToken_returns401NotSilentlyAnonymous() throws Exception {
