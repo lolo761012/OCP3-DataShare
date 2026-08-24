@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import java.time.LocalDateTime;
 
@@ -136,6 +137,18 @@ public class RestExceptionHandler {
         return buildResponse(
                 HttpStatus.NOT_FOUND,
                 "Resource not found",
+                request
+        );
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ErrorDetails> handleUnsupportedMediaType(
+            HttpMediaTypeNotSupportedException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                exception.getMessage(),
                 request
         );
     }
