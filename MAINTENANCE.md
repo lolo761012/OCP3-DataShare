@@ -74,3 +74,19 @@ Le script de développement est :
 ```
 
 Les scripts d'installation et de configuration de la base demandés dans les livrables seront ajoutés dans la phase dédiée.
+
+## Cohérence PostgreSQL / stockage local
+
+Le stockage physique des fichiers et PostgreSQL ne partagent pas la même transaction.
+
+Lors d'un upload :
+- le fichier physique est créé ;
+- les métadonnées sont ensuite enregistrées en base ;
+- si la persistance échoue, une suppression compensatoire du fichier physique est tentée ;
+- si cette suppression échoue également, l'erreur est journalisée.
+
+Une opération de maintenance future pourra comparer périodiquement les fichiers présents dans
+`storage/files` avec les chemins référencés en base afin d'identifier et supprimer d'éventuels
+fichiers orphelins.
+
+Ce contrôle est distinct du scheduler de suppression des fichiers expirés.
