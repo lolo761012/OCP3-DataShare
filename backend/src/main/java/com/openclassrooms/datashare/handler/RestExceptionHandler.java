@@ -1,15 +1,19 @@
 package com.openclassrooms.datashare.handler;
 
 import com.openclassrooms.datashare.exception.EmailAlreadyUsedException;
+import com.openclassrooms.datashare.exception.FileTooLargeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
@@ -73,9 +77,48 @@ public class RestExceptionHandler {
         );
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorDetails> handleMissingParameter(
+            MissingServletRequestParameterException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler({MaxUploadSizeExceededException.class, FileTooLargeException.class})
+    public ResponseEntity<ErrorDetails> handleFileTooLarge(
+            Exception exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                "Uploaded file exceeds the maximum allowed size",
+                request
+        );
+    }
+
+
+    @ExceptionHandler({
+            IllegalArgumentException.class
+    })
     public ResponseEntity<ErrorDetails> handleBadRequest(
             RuntimeException exception,
+            WebRequest request) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorDetails> handleMissingPart(
+            MissingServletRequestPartException exception,
             WebRequest request) {
 
         return buildResponse(

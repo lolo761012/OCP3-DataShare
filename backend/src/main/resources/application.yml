@@ -1,4 +1,4 @@
-﻿spring:
+spring:
   config:
     import: "optional:file:../.env[.properties]"
   application:
@@ -13,6 +13,11 @@
     hibernate:
       ddl-auto: update
     open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1030MB
 
 server:
   port: 8080
