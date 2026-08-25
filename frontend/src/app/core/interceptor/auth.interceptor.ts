@@ -3,7 +3,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from '../service/auth.service';
 
 function isPublicEndpoint(url: string): boolean {
-  return url.startsWith('/api/auth/') || url.startsWith('/actuator/');
+  return url.startsWith('/api/auth/') || url.startsWith('/api/downloads/') || url.startsWith('/actuator/');
 }
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

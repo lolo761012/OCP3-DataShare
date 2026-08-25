@@ -1,0 +1,61 @@
+<app-header></app-header>
+
+<div class="page-content">
+
+  @if (loading()) {
+    <p>Chargement du fichier...</p>
+  }
+
+  @if (errorMessage() && !downloadInfo()) {
+    <div class="download-card">
+      <p class="status-error">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  @if (downloadInfo(); as info) {
+    <div class="download-card">
+
+      <h2>Télécharger un fichier</h2>
+
+      <div class="file-row">
+        <div class="file-info">
+          <!-- ici tu recopies ton SVG fichier -->
+
+          <div>
+            <p class="file-name">{{ info.fileName }}</p>
+            <p class="file-size">{{ formatFileSize(info.size) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="downloadForm" (ngSubmit)="onDownload()">
+
+        @if (info.passwordProtected) {
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+            />
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <p class="status-error">{{ errorMessage() }}</p>
+        }
+
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="downloading()"
+        >
+          {{ downloading() ? 'Téléchargement...' : 'Télécharger' }}
+        </button>
+
+      </form>
+
+    </div>
+  }
+
+</div>

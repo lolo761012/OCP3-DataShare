@@ -2,6 +2,8 @@ package com.openclassrooms.datashare.handler;
 
 import com.openclassrooms.datashare.exception.EmailAlreadyUsedException;
 import com.openclassrooms.datashare.exception.FileTooLargeException;
+import com.openclassrooms.datashare.exception.InvalidDownloadPasswordException;
+import com.openclassrooms.datashare.exception.StoredFileExpiredException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+
 
 import java.time.LocalDateTime;
 
@@ -153,6 +156,20 @@ public class RestExceptionHandler {
         );
     }
 
+    @ExceptionHandler(StoredFileNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleStoredFileNotFound(
+            StoredFileNotFoundException exception,
+            WebRequest request) {
+
+        ErrorDetails error = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleUnexpectedException(
             Exception exception,
@@ -179,5 +196,33 @@ public class RestExceptionHandler {
         );
 
         return ResponseEntity.status(status).body(details);
+    }
+
+    @ExceptionHandler(StoredFileExpiredException.class)
+    public ResponseEntity<ErrorDetails> handleStoredFileExpired(
+            StoredFileExpiredException exception,
+            WebRequest request) {
+
+        ErrorDetails error = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.GONE);
+    }
+
+    @ExceptionHandler(InvalidDownloadPasswordException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidDownloadPassword(
+            InvalidDownloadPasswordException exception,
+            WebRequest request) {
+
+        ErrorDetails error = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 }
