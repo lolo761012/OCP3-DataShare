@@ -1,9 +1,7 @@
 package com.openclassrooms.datashare.handler;
 
-import com.openclassrooms.datashare.exception.EmailAlreadyUsedException;
-import com.openclassrooms.datashare.exception.FileTooLargeException;
-import com.openclassrooms.datashare.exception.InvalidDownloadPasswordException;
-import com.openclassrooms.datashare.exception.StoredFileExpiredException;
+import com.openclassrooms.datashare.exception.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -224,5 +222,20 @@ public class RestExceptionHandler {
         );
 
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+
+    @ExceptionHandler(InvalidOwnerException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidOwner(
+            InvalidOwnerException exception,
+            HttpServletRequest request) {
+
+        ErrorDetails error = new ErrorDetails(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 }

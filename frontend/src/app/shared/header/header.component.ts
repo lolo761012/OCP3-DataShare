@@ -26,4 +26,5 @@ logout(): void {
   @Input() actionLabel = 'Se connecter';
   @Input() actionRoute = '/login';
   @Input() showAddFiles = false;
+  @Input() showMySpace = false;
 }

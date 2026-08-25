@@ -142,4 +142,15 @@
   .file-row > button {
     margin-left: 0;
   }
+
+  .file-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 20px;
+  }
+
+  .status-success {
+  color: green;
+  margin-bottom: 16px;
+}
 }

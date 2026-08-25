@@ -21,7 +21,7 @@ export class MySpaceComponent implements OnInit {
     filter = signal<'ALL' | 'VALID' | 'EXPIRED'>('ALL');
     loading = signal(false);
     errorMessage = signal('');
-
+    successMessage = signal('');
     filteredFiles = computed(() => {
     const currentFilter = this.filter();
 
@@ -34,6 +34,10 @@ export class MySpaceComponent implements OnInit {
 
 
     ngOnInit(): void {
+        this.loadFiles();
+    }
+
+    loadFiles(): void {
         this.loading.set(true);
 
         this.fileApiService.getFiles().subscribe({
@@ -46,8 +50,24 @@ export class MySpaceComponent implements OnInit {
                 this.errorMessage.set('Impossible de charger les fichiers.');
             }
         });
-
     }
+
+    deleteFile(file: StoredFileList): void {
+        if (file.id === null) {
+            return;
+        }
+
+        this.fileApiService.deleteFile(file.id).subscribe({
+            next: () => {
+                this.successMessage.set('Fichier supprimé avec succès.');
+                this.loadFiles();
+            },
+            error: () => {
+                this.errorMessage.set('Impossible de supprimer le fichier.');
+            }
+        });
+    }
+
     setFilter(filter: 'ALL' | 'VALID' | 'EXPIRED'): void {
         this.filter.set(filter);
     }

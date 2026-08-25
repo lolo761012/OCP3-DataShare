@@ -31,4 +31,10 @@ export class FileApiService {
   getFiles(): Observable<StoredFileList[]> {
     return this.http.get<StoredFileList[]>('/api/files');
   }
+
+  deleteFile(storedFileId: number): Observable<void> {
+   return this.http.delete<void> (
+      '/api/files/' + storedFileId
+    );
+  }
 }

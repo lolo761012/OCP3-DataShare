@@ -4,6 +4,11 @@
   <div class="header-actions">
     @if (isAuthenticated()) {
 
+      @if (showMySpace) {
+        <a routerLink="/myspace" class="btn-pill">
+          Mon espace
+        </a>
+      }
       @if (showAddFiles) {
         <a routerLink="/upload" class="btn-pill">
           Ajouter des fichiers

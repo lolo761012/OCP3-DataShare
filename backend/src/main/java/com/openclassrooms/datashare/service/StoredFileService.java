@@ -8,6 +8,7 @@ import com.openclassrooms.datashare.entities.StoredFileHistory;
 import com.openclassrooms.datashare.entities.User;
 import com.openclassrooms.datashare.exception.FileStorageException;
 import com.openclassrooms.datashare.exception.FileTooLargeException;
+import com.openclassrooms.datashare.exception.InvalidOwnerException;
 import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
 import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
 import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
@@ -143,12 +144,26 @@ public class StoredFileService  {
         return storedFileDtoMapper.toDto(storedFile);
     }
 
-    public void deleteStoredFile(long id) {
-        StoredFile storedFile = storedFileRepository.findById(id)
+    public void deleteStoredFile(Long fileId, Long ownerId) {
+        StoredFile storedFile = storedFileRepository.findById(fileId)
                 .orElseThrow(() ->
-                        new StoredFileNotFoundException(id));
+                        new StoredFileNotFoundException(fileId));
+
+        if (storedFile.getOwner() == null
+                || !storedFile.getOwner().getId().equals(ownerId)) {
+            throw new InvalidOwnerException("You are not allowed to delete this file");
+        }
+
+        try {
+            Files.deleteIfExists(Path.of(storedFile.getStoragePath()));
+        } catch (IOException e) {
+            throw new FileStorageException("Unable to delete stored file", e);
+        }
+
 
         storedFileRepository.delete(storedFile);
+
+
     }
 
     private void validateFile(MultipartFile file) {

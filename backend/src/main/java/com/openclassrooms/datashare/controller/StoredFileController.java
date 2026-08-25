@@ -58,12 +58,11 @@ public class StoredFileController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStoredFile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStoredFile(@PathVariable Long id, Authentication authentication) {
+        User owner = resolveOwner(authentication);
+        storedFileService.deleteStoredFile(id, owner.getId());
 
-        storedFileService.deleteStoredFile(id);
-
-        return ResponseEntity.ok(
-                "Le fichier avec l'id " + id + " a été effacé avec succès");
+        return ResponseEntity.noContent().build();
     }
 
     private User resolveOwner(Authentication authentication) {

@@ -35,6 +35,10 @@
     <p>Chargement...</p>
   }
 
+  @if (successMessage()) {
+        <p class="status-success">{{ successMessage() }}</p>
+    }
+
   @if (errorMessage()) {
     <p class="status-error">{{ errorMessage() }}</p>
   }
@@ -66,12 +70,16 @@
         </div>
 
         @if (file.status === 'VALID') {
-          <button type="button" (click)="openFile(file)">
-            Accéder
-          </button>
-        }
+  <div class="file-actions">
+    <button type="button" (click)="deleteFile(file)">
+      Supprimer
+    </button>
 
-        <!-- Supprimer : US06 -->
+    <button type="button" (click)="openFile(file)">
+      Accéder
+    </button>
+  </div>
+}
 
       </div>
 
