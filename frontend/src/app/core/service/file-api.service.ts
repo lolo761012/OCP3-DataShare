@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { StoredFileUploadResponse } from '../models/stored-file-upload-response.model';
+import { StoredFileList } from '../models/stored-file-list.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +26,9 @@ export class FileApiService {
     }
 
     return this.http.post<StoredFileUploadResponse>('/api/files', formData);
+  }
+
+  getFiles(): Observable<StoredFileList[]> {
+    return this.http.get<StoredFileList[]>('/api/files');
   }
 }

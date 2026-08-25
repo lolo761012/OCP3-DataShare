@@ -8,6 +8,7 @@ import { HeaderComponent } from '../../shared/header/header.component';
 import { AuthApiService } from '../../core/service/auth-api.service';
 import { AuthService } from '../../core/service/auth.service';
 import { LoginRequest } from '../../core/models/login-request.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginComponent {
   private authApiService = inject(AuthApiService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -60,6 +62,7 @@ export class LoginComponent {
           this.loading.set(false);
           this.authService.saveToken(response.token);
           this.success.set(true);
+          this.router.navigate(['/myspace']);
         },
         error: (error) => {
           this.loading.set(false);

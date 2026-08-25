@@ -1,13 +1,16 @@
 package com.openclassrooms.datashare.service;
 
 import com.openclassrooms.datashare.dto.StoredFileDTO;
+import com.openclassrooms.datashare.dto.StoredFileListDTO;
 import com.openclassrooms.datashare.dto.StoredFileUploadResponseDTO;
 import com.openclassrooms.datashare.entities.StoredFile;
+import com.openclassrooms.datashare.entities.StoredFileHistory;
 import com.openclassrooms.datashare.entities.User;
 import com.openclassrooms.datashare.exception.FileStorageException;
 import com.openclassrooms.datashare.exception.FileTooLargeException;
 import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
 import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
+import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
 import com.openclassrooms.datashare.repository.StoredFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 @Slf4j
@@ -46,6 +46,7 @@ public class StoredFileService  {
     private final StoredFileRepository storedFileRepository;
     private final StoredFileDtoMapper storedFileDtoMapper;
     private final PasswordEncoder passwordEncoder;
+    private final StoredFileHistoryRepository storedFileHistoryRepository;
 
     @Value("${datashare.storage.path}")
     private String storagePath;
@@ -97,8 +98,42 @@ public class StoredFileService  {
         );
     }
 
-    public List<StoredFileDTO> listStoredFiles() {
-        return storedFileDtoMapper.toDtoList(storedFileRepository.findAll());
+    public List<StoredFileListDTO> getFilesForUser(long userId) {
+        List<StoredFile> activeFiles =
+                storedFileRepository.findAllByOwner_Id(userId);
+
+        List<StoredFileHistory> expiredFiles =
+                storedFileHistoryRepository.findAllByOwner_Id(userId);
+
+        List<StoredFileListDTO> result = new ArrayList<>();
+        for (StoredFile file : activeFiles) {
+            StoredFileListDTO dto = new StoredFileListDTO();
+
+            dto.setId(file.getId());
+            dto.setFileName(file.getFileName());
+            dto.setSize(file.getSize());
+            dto.setUploadedAt(file.getUploadedAt());
+            dto.setExpiresAt(file.getExpiresAt());
+            dto.setStatus("VALID");
+            dto.setDownloadToken(file.getDownloadToken());
+
+            result.add(dto);
+        }
+        for (StoredFileHistory file : expiredFiles) {
+            StoredFileListDTO dto = new StoredFileListDTO();
+
+            dto.setFileName(file.getFileName());
+            dto.setSize(file.getSize());
+            dto.setUploadedAt(file.getUploadedAt());
+            dto.setExpiresAt(file.getExpiresAt());
+            dto.setStatus("EXPIRED");
+
+            result.add(dto);
+        }
+        result.sort(
+                Comparator.comparing(StoredFileListDTO::getUploadedAt).reversed()
+        );
+        return result;
     }
 
     public StoredFileDTO getStoredFileByToken(long id) {

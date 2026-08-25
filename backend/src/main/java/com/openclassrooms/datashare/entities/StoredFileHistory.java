@@ -1,9 +1,11 @@
 package com.openclassrooms.datashare.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "file_history")
 public class StoredFileHistory {

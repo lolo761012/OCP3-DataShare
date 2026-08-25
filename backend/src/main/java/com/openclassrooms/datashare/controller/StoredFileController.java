@@ -1,6 +1,7 @@
 package com.openclassrooms.datashare.controller;
 
 import com.openclassrooms.datashare.dto.StoredFileDTO;
+import com.openclassrooms.datashare.dto.StoredFileListDTO;
 import com.openclassrooms.datashare.dto.StoredFileUploadResponseDTO;
 import com.openclassrooms.datashare.entities.User;
 import com.openclassrooms.datashare.service.StoredFileService;
@@ -43,8 +44,12 @@ public class StoredFileController {
     }
 
     @GetMapping({"", "/"})
-    public ResponseEntity<List<StoredFileDTO>> listStoredFiles() {
-        return ResponseEntity.ok(storedFileService.listStoredFiles());
+    public ResponseEntity<List<StoredFileListDTO>> listStoredFiles(
+        Authentication authentication){
+
+            User owner = resolveOwner(authentication);
+
+        return ResponseEntity.ok(storedFileService.getFilesForUser(owner.getId()));
     }
 
     @GetMapping("/{id}")

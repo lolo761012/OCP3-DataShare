@@ -1,4 +1,23 @@
 <header class="app-header">
   <span class="brand">DataShare</span>
-  <a [routerLink]="actionRoute" class="btn-pill">{{ actionLabel }}</a>
+
+  <div class="header-actions">
+    @if (isAuthenticated()) {
+
+      @if (showAddFiles) {
+        <a routerLink="/upload" class="btn-pill">
+          Ajouter des fichiers
+        </a>
+      }
+
+      <button type="button" class="btn-pill" (click)="logout()">
+        Déconnexion
+      </button>
+
+    } @else {
+      <a [routerLink]="actionRoute" class="btn-pill">
+        {{ actionLabel }}
+      </a>
+    }
+  </div>
 </header>

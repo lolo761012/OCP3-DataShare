@@ -14,6 +14,8 @@ describe('LoginComponent', () => {
   let router: Router;
   let loginMock: ReturnType<typeof vi.fn>;
   let saveTokenMock: ReturnType<typeof vi.fn>;
+  let navigateSpy: ReturnType<typeof vi.spyOn>;
+
 
   const validEmail = 'user@example.com';
   const validPassword = 'password123';
@@ -35,7 +37,8 @@ describe('LoginComponent', () => {
   {
     provide: AuthService,
     useValue: {
-      saveToken: saveTokenMock
+      saveToken: saveTokenMock,
+      isAuthenticated: vi.fn().mockReturnValue(false)
     }
   }
 ]
@@ -44,6 +47,7 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   });
 
@@ -154,17 +158,12 @@ describe('LoginComponent', () => {
     expect(component.loginForm.get('password')?.value).toBe(validPassword);
   });
 
-  it('does not navigate automatically after successful login', () => {
-    const navigateSpy = vi.spyOn(router, 'navigate');
-    const navigateByUrlSpy = vi.spyOn(router, 'navigateByUrl');
+  it('navigates to myspace after successful login', () => {
 
     loginMock.mockReturnValue(of<LoginResponse>({ token: 'jwt-token' }));
     fillValidForm();
-
     component.onSubmit();
-
-    expect(navigateSpy).not.toHaveBeenCalled();
-    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/myspace']);
   });
 
   it('displays a 401 backend message and does not store a token', () => {

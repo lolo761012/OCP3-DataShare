@@ -1,0 +1,82 @@
+<app-header [showAddFiles]="true"></app-header>
+
+<div class="page-content">
+
+  <div class="page-header">
+    <h1>Mes fichiers</h1>
+  </div>
+
+  <div class="filters">
+  <button
+    type="button"
+    [class.active]="filter() === 'ALL'"
+    (click)="setFilter('ALL')">
+    Tous
+  </button>
+
+  <button
+    type="button"
+    [class.active]="filter() === 'VALID'"
+    (click)="setFilter('VALID')">
+    Actifs
+  </button>
+
+  <button
+    type="button"
+    [class.active]="filter() === 'EXPIRED'"
+    (click)="setFilter('EXPIRED')">
+    Expirés
+  </button>
+</div>
+
+
+
+  @if (loading()) {
+    <p>Chargement...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="status-error">{{ errorMessage() }}</p>
+  }
+
+  <div class="file-list">
+
+    @for (file of filteredFiles(); track $index) {
+
+      <div class="file-row">
+
+        <div class="file-info">
+          <p class="file-name">{{ file.fileName }}</p>
+
+          <p class="file-size">
+            {{ formatFileSize(file.size) }}
+          </p>
+
+          <p class="file-uploadedAt">
+            Envoyé le {{ file.uploadedAt | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+
+          <p class="file-expiresAt">
+            Expire le {{ file.expiresAt | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+
+          <p class="file-status">
+            {{ file.status === 'VALID' ? 'Actif' : 'Expiré' }}
+          </p>
+        </div>
+
+        @if (file.status === 'VALID') {
+          <button type="button" (click)="openFile(file)">
+            Accéder
+          </button>
+        }
+
+        <!-- Supprimer : US06 -->
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

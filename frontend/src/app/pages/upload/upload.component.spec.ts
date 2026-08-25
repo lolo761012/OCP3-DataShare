@@ -30,7 +30,6 @@ describe('UploadComponent', () => {
   beforeEach(async () => {
     uploadFileMock = vi.fn();
     logoutMock = vi.fn();
-    
 
     Object.defineProperty(navigator, 'clipboard', {
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
@@ -46,9 +45,12 @@ describe('UploadComponent', () => {
     useValue: { uploadFile: uploadFileMock }
   },
   {
-    provide: AuthService,
-    useValue: { logout: logoutMock }
+  provide: AuthService,
+  useValue: {
+    logout: logoutMock,
+    isAuthenticated: vi.fn().mockReturnValue(true)
   }
+}
 ]
     }).compileComponents();
 
