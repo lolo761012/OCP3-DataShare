@@ -10,4 +10,5 @@ public interface StoredFileHistoryRepository
         extends JpaRepository<StoredFileHistory, Long> {
 
     List<StoredFileHistory> findAllByOwner_Id(Long ownerId);
+    boolean existsByDownloadToken(String downloadToken);
 }

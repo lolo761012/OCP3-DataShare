@@ -13,6 +13,7 @@ import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
 import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
 import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
 import com.openclassrooms.datashare.repository.StoredFileRepository;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +49,7 @@ public class StoredFileService  {
     private final StoredFileDtoMapper storedFileDtoMapper;
     private final PasswordEncoder passwordEncoder;
     private final StoredFileHistoryRepository storedFileHistoryRepository;
+    private final StoredFilePurgeService storedFilePurgeService;
 
     @Value("${datashare.storage.path}")
     private String storagePath;
@@ -245,6 +247,23 @@ public class StoredFileService  {
             Files.deleteIfExists(path);
         } catch (IOException cleanupException) {
             log.error("Failed to delete orphaned file {} after persistence failure", path, cleanupException);
+        }
+    }
+
+
+    public void purgeExpiredFiles() {
+        List<StoredFile> expiredFiles =
+                storedFileRepository.findAllByExpiresAtBefore(LocalDateTime.now());
+
+        for (StoredFile file : expiredFiles) {
+            try {
+                storedFilePurgeService.purgeExpiredFile(file.getId());
+            } catch (RuntimeException e) {
+                System.err.println(
+                        "Unable to purge expired file id=" + file.getId()
+                                + ": " + e.getMessage()
+                );
+            }
         }
     }
 }

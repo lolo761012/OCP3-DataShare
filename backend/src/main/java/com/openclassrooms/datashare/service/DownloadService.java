@@ -7,6 +7,7 @@ import com.openclassrooms.datashare.exception.InvalidDownloadPasswordException;
 import com.openclassrooms.datashare.exception.StoredFileExpiredException;
 import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
 import com.openclassrooms.datashare.mapper.DownloadInfoMapper;
+import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
 import com.openclassrooms.datashare.repository.StoredFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,8 @@ import java.nio.file.Paths;
 
 import java.time.LocalDateTime;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class DownloadService {
@@ -26,6 +29,7 @@ public class DownloadService {
     private final StoredFileRepository storedFileRepository;
     private final DownloadInfoMapper downloadInfoMapper;
     private final PasswordEncoder passwordEncoder;
+    private final StoredFileHistoryRepository storedFileHistoryRepository;
 
     public DownloadInfoDTO getStoredFileByToken(String downloadToken) {
         StoredFile storedFile = getStoredFileEntityByToken(downloadToken);
@@ -56,18 +60,23 @@ public class DownloadService {
 
 
     private StoredFile getStoredFileEntityByToken(String downloadToken) {
-        StoredFile storedFile = storedFileRepository
-                .findByDownloadToken(downloadToken)
-                .orElseThrow(() ->
-                        new StoredFileNotFoundException(downloadToken));
 
-        if (storedFile.getExpiresAt().isBefore(LocalDateTime.now())) {
+        Optional<StoredFile> storedFile =
+                storedFileRepository.findByDownloadToken(downloadToken);
+
+        if (storedFile.isPresent()) {
+            if (storedFile.get().getExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new StoredFileExpiredException(downloadToken);
+            }
+
+            return storedFile.get();
+        }
+
+        if (storedFileHistoryRepository.existsByDownloadToken(downloadToken)) {
             throw new StoredFileExpiredException(downloadToken);
         }
 
-        return storedFile;
+        throw new StoredFileNotFoundException(downloadToken);
     }
-
-
 }
 
