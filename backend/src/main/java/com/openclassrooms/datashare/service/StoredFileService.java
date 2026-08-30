@@ -13,7 +13,7 @@ import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
 import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
 import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
 import com.openclassrooms.datashare.repository.StoredFileRepository;
-import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

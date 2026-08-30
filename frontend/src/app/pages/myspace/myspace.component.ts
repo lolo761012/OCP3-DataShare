@@ -5,6 +5,7 @@ import { StoredFileList } from '../../core/models/stored-file-list.model';
 import { HeaderComponent } from '../../shared/header/header.component';
 import { FileApiService } from '../../core/service/file-api.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/service/auth.service';
 
 
 @Component({
@@ -17,6 +18,7 @@ import { Router } from '@angular/router';
 export class MySpaceComponent implements OnInit {
     private fileApiService = inject(FileApiService);
     private router = inject(Router);
+    private authService = inject(AuthService);
     files = signal<StoredFileList[]>([]);
     filter = signal<'ALL' | 'VALID' | 'EXPIRED'>('ALL');
     loading = signal(false);
@@ -45,8 +47,13 @@ export class MySpaceComponent implements OnInit {
                 this.files.set(files);
                 this.loading.set(false);
             },
-            error: () => {
+            error: (error) => {
                 this.loading.set(false);
+                if (error.status === 401) {
+                    this.authService.logout();
+                    this.router.navigate(['/login']);
+                    return;
+                }
                 this.errorMessage.set('Impossible de charger les fichiers.');
             }
         });
@@ -54,6 +61,9 @@ export class MySpaceComponent implements OnInit {
 
     deleteFile(file: StoredFileList): void {
         if (file.id === null) {
+            return;
+        }
+        if (!confirm('Supprimer ce fichier?')) {
             return;
         }
 
