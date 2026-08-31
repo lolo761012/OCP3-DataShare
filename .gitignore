@@ -9,3 +9,8 @@ storage/files/*
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Cypress generated artifacts
+/frontend/cypress/screenshots/
+/frontend/cypress/downloads/
+/frontend/cypress/videos/
