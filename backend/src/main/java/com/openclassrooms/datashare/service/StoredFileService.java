@@ -263,10 +263,7 @@ public class StoredFileService  {
             try {
                 storedFilePurgeService.purgeExpiredFile(file.getId());
             } catch (RuntimeException e) {
-                System.err.println(
-                        "Unable to purge expired file id=" + file.getId()
-                                + ": " + e.getMessage()
-                );
+                log.error("Unable to purge expired file id={}", file.getId(), e);
             }
         }
     }

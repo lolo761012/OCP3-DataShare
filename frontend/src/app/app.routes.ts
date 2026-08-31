@@ -7,6 +7,11 @@ import { MySpaceComponent } from './pages/myspace/myspace.component';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
     path: 'login',
     component: LoginComponent
   },
@@ -25,6 +30,9 @@ export const routes: Routes = [
   {
     path: 'downloads/:token',
     component: DownloadComponent
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
-  
 ];
