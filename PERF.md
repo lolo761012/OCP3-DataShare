@@ -49,4 +49,10 @@ Test Lighthouse sur la page `/myspace` en local :
 - Bonnes pratiques : 100
 - SEO : 90
 
-Le test a été réalisé avec le serveur Angular de développement.
+### Analyse et optimisations possibles
+
+Le test a été réalisé avec le serveur Angular de développement (`npm start`). Ce mode est prévu pour faciliter le développement et ajoute des traitements qui ne sont pas présents de la même manière dans une version destinée aux utilisateurs.
+
+Une première amélioration serait donc de tester la version compilée de l'application afin de mesurer les performances dans des conditions plus proches d'une utilisation réelle.
+
+Si nécessaire, les éléments chargés par chaque page et les appels au backend pourraient ensuite être analysés pour identifier ce qui ralentit l'affichage.

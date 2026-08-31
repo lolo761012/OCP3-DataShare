@@ -314,11 +314,19 @@ depuis le frontend sans configuration CORS spécifique pour le développement lo
 
 ## Tests
 
+Les tests du projet sont documentés dans [`TESTING.md`](TESTING.md).
 
-Les tests unitaires, d'intégration et fonctionnels seront ajoutés au cours du développement.
+État actuel :
+- 46 tests backend réussis ;
+- 92 tests frontend réussis ;
+- 3 scénarios E2E Cypress réussis ;
+- couverture backend : 72,57 % ;
+- couverture frontend : 74,29 %.
 
-
-Les commandes de test seront documentées ici au fur et à mesure de leur mise en place.
+Les contrôles de sécurité, de performance et de maintenance sont documentés dans :
+- [`SECURITY.md`](SECURITY.md)
+- [`PERF.md`](PERF.md)
+- [`MAINTENANCE.md`](MAINTENANCE.md)
 
 
 ## Documentation
@@ -333,14 +341,14 @@ La documentation de conception est disponible dans le dossier `docs/`, notamment
 
 ## État du projet
 
+Le MVP DataShare est fonctionnel.
 
-Le socle technique est initialisé et validé :
-
-- PostgreSQL opérationnel ;
-- backend Spring Boot opérationnel ;
-- frontend Angular opérationnel ;
-- communication Angular → Spring Boot opérationnelle ;
-- scripts `start`, `stop` et `status` validés ;
-- stockage local préparé.
-
-Le développement fonctionnel des User Stories est réalisé dans les étapes suivantes.
+Fonctionnalités principales :
+- création de compte ;
+- connexion JWT ;
+- upload de fichier authentifié ou anonyme ;
+- génération d'un lien de téléchargement ;
+- téléchargement de fichier ;
+- consultation des fichiers d'un utilisateur ;
+- suppression de fichier ;
+- expiration et purge automatique des fichiers.
