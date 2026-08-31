@@ -1,47 +1,52 @@
 # PERF
 
-## Objectif
+## Test k6
 
-Définir et suivre les contrôles de performance de DataShare.
+Endpoint testé : `POST /api/files`
 
-## État
+- 5 utilisateurs simultanés
+- durée : 10 s
+- 2623 requêtes
+- 0 erreur
+- temps moyen : 18,82 ms
+- 95 % des requêtes : moins de 34,87 ms
+- débit : environ 262 requêtes/s
 
-Document initialisé pendant la phase 2. Les mesures seront ajoutées lorsque les endpoints fonctionnels seront disponibles.
+### Analyse
 
-## Test backend
+Le test a traité 2623 uploads en 10 secondes sans erreur.
 
-Un test de performance rapide sera réalisé sur un endpoint critique avec **k6 ou équivalent**.
+95 % des requêtes ont répondu en moins de 34,87 ms et le débit a atteint environ 262 requêtes par seconde.
 
-Endpoint pressenti :
+Dans les conditions de ce test local, l'endpoint d'upload supporte donc la charge testée sans erreur ni ralentissement important.
 
-- upload ou téléchargement d'un fichier.
+## Métriques backend
 
-À documenter :
+Spring Boot Actuator :
 
-- scénario ;
-- nombre de requêtes / utilisateurs virtuels ;
-- temps de réponse ;
-- taux d'erreur ;
-- résultats ;
-- interprétation.
+- 2623 requêtes comptées
+- temps cumulé : 47,62 s
+- temps maximum : 500 ms
 
-## Budget frontend
+## Logs
 
-À suivre :
+Un log est écrit après chaque upload :
 
-- taille du bundle Angular ;
-- temps de chargement ;
-- mesures navigateur pertinentes.
+```text
+file_upload id=8463 size=26 owner=anonymous
+```
 
-## Métriques
+## Frontend
 
-Exemples de métriques suivies :
+La taille initiale du frontend Angular est de 340,56 kB, sous la limite d'avertissement fixée à 500 kB.
 
-- temps de réponse ;
-- taille des fichiers ;
-- taux d'erreur ;
-- taille du bundle frontend.
+## Performance navigateur
 
-## Preuves
+Test Lighthouse sur la page `/myspace` en local :
 
-Des captures de logs ou de métriques seront ajoutées avant livraison.
+- Performance : 59
+- Accessibilité : 100
+- Bonnes pratiques : 100
+- SEO : 90
+
+Le test a été réalisé avec le serveur Angular de développement.

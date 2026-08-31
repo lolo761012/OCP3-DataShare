@@ -1,92 +1,124 @@
 # MAINTENANCE
 
-## Objectif
-
-Documenter les opérations courantes de maintenance de DataShare.
-
-## État
-
-Document initialisé pendant la phase 2. Il sera enrichi pendant le développement.
-
 ## Démarrage / arrêt
 
-La procédure de développement est documentée dans le `README.md`.
+L'application peut être lancée séparément.
+
+Backend :
+
+    cd backend
+    .\mvnw.cmd spring-boot:run
+
+Frontend :
+
+    cd frontend
+    npm start
+
+PostgreSQL :
+
+    docker compose up -d
+
+Pour arrêter PostgreSQL :
+
+    docker compose down
+
+Le volume PostgreSQL est conservé après un `docker compose down`.
+
+## Script de développement
+
+Le script `scripts/dev.ps1` permet de gérer l'ensemble de l'environnement DataShare.
+
+Depuis la racine du projet :
+
+    .\scripts\dev.ps1 start
+
+Démarre PostgreSQL, le backend et le frontend.
+
+    .\scripts\dev.ps1 status
+
+Affiche l'état de PostgreSQL, du backend et du frontend.
+
+    .\scripts\dev.ps1 stop
+
+Arrête le frontend, le backend et PostgreSQL.
+
+## PostgreSQL
+
+Vérifier l'état de la base :
+
+    docker compose ps
+
+Se connecter à PostgreSQL :
+
+    docker exec -it datashare-postgres psql -U datashare -d datashare
+
+Commandes utiles dans PostgreSQL :
+
+    \dt
+
+Affiche les tables.
+
+    \d stored_file
+
+Affiche la structure de la table `stored_file`.
+
+    SELECT * FROM stored_file;
+
+Affiche les fichiers enregistrés en base.
+
+    \q
+
+Quitte PostgreSQL.
 
 ## Mise à jour des dépendances
 
-### Frontend
+Frontend :
 
-Contrôler régulièrement :
+    npm outdated
 
-```powershell
-cd frontend
-npm outdated
-```
+La commande affiche les dépendances pour lesquelles une version plus récente existe.
 
-Les mises à jour doivent être testées avant intégration.
+Pour le backend, les versions sont définies dans `pom.xml`.
 
-### Backend
+Après une mise à jour, les tests doivent être relancés.
 
-Les versions Maven / Spring Boot seront contrôlées avant toute mise à jour.
+Fréquence :
 
-## Fréquence
+- vérifier les dépendances avant une livraison ;
+- vérifier les vulnérabilités après une mise à jour importante.
 
-Prévision :
-
-- contrôle des dépendances : avant livraison et lors des opérations de maintenance ;
-- contrôle des vulnérabilités : avant livraison et après mise à jour importante.
-
-## Risques liés aux mises à jour
+Risques principaux :
 
 - incompatibilité de versions ;
-- régression fonctionnelle ;
+- régression ;
 - changement de configuration ;
-- vulnérabilité introduite ou non corrigée.
-
-## Base PostgreSQL
-
-Le développement local utilise Docker Compose.
-
-```powershell
-docker compose up -d
-docker compose down
-```
-
-Le volume PostgreSQL est conservé lors d'un `docker compose down` normal.
+- vulnérabilité.
 
 ## Logs et diagnostic
 
-À compléter avec :
+Les logs du backend sont affichés dans le terminal Spring Boot.
 
-- localisation des logs backend ;
-- diagnostic des erreurs frontend ;
-- contrôle de l'état PostgreSQL ;
-- procédures de sauvegarde / restauration si nécessaires.
+Les erreurs frontend peuvent être consultées dans la console du navigateur.
 
-## Scripts d'exploitation
+L'état de PostgreSQL peut être vérifié avec :
 
-Le script de développement est :
+    docker compose ps
 
-```powershell
-.\scripts\dev.ps1 start
-.\scripts\dev.ps1 status
-.\scripts\dev.ps1 stop
-```
+## Purge des fichiers expirés
 
-Les scripts d'installation et de configuration de la base demandés dans les livrables seront ajoutés dans la phase dédiée.
+La purge est automatique :
 
-## Cohérence PostgreSQL / stockage local
+- premier contrôle 5 secondes après le démarrage ;
+- nouveau contrôle toutes les heures ;
+- le fichier physique est supprimé ;
+- un historique minimal est conservé pour pouvoir être affiché dans l'espace Mes Fichiers.
 
-Le stockage physique des fichiers et PostgreSQL ne partagent pas la même transaction.
+## Fichiers orphelins
 
-Lors d'un upload :
-- le fichier physique est créé ;
-- les métadonnées sont ensuite enregistrées en base ;
-- si la persistance échoue, une suppression compensatoire du fichier physique est tentée ;
-- si cette suppression échoue également, l'erreur est journalisée.
+Lors d'un upload, le fichier est d'abord écrit sur le disque puis ses informations sont enregistrées dans PostgreSQL.
 
-Une opération de maintenance future pourra comparer périodiquement les fichiers présents dans
-`storage/files` avec les chemins référencés en base afin d'identifier et supprimer d'éventuels
-fichiers orphelins.
+Si l'enregistrement en base échoue, le fichier physique est supprimé.
 
-Ce contrôle est distinct du scheduler de suppression des fichiers expirés.
+Si cette suppression échoue également, l'erreur est enregistrée dans les logs du backend.
+
+Un contrôle de maintenance pourra comparer `storage/files` avec les fichiers référencés en base afin d'identifier d'éventuels fichiers orphelins.

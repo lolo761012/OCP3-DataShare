@@ -1,71 +1,80 @@
 # TESTING
 
-## Objectif
+## Plan de tests
 
-Définir et suivre la stratégie de tests de DataShare.
+| Partie | Type de test | Vérifications |
+|---|---|---|
+| Backend | Unitaires et intégration | authentification, upload, téléchargement, suppression, expiration |
+| Frontend | Unitaires | services, formulaires, affichage et gestion des erreurs |
+| Application complète | E2E Cypress | inscription/connexion/upload, téléchargement, suppression |
 
-## État actuel
+## Critères d'acceptation
 
-### Backend — US03 / US04
-- JUnit / Mockito / Spring Boot Test / Testcontainers
-- 29 tests
-- Résultat : 29 succès, 0 échec
+- tous les tests doivent réussir ;
+- les 3 scénarios E2E critiques doivent fonctionner ;
+- la couverture des lignes doit atteindre au moins 70 % sur le backend et le frontend.
 
-Exécution :
+## Backend
+
+- 46 tests
+- 46 succès
+- tests unitaires et tests d'intégration avec PostgreSQL/Testcontainers
+- couverture des lignes : 72,57 %
+
+Commande :
+
 ```powershell
 cd backend
 .\mvnw.cmd test
 ```
 
-### Frontend — US03 / US04
-- Vitest / Angular TestBed / HttpTestingController
-- AuthService : 6 tests
-- AuthApiService : 6 tests
-- AuthInterceptor : 7 tests
-- RegisterComponent : 16 tests
-- LoginComponent : 14 tests
-- App : 1 test
-- Total : 50 tests, 50 succès
+## Frontend
 
-Exécution :
+- 92 tests
+- 92 succès
+- tests des services, composants et affichage
+- couverture des lignes : 74,29 %
+
+Commande :
+
 ```powershell
 cd frontend
-npm test -- --watch=false
+npm test -- --watch=false --coverage
 ```
 
-## Tests unitaires
+## Tests E2E
 
-À couvrir au minimum pour les fonctionnalités obligatoires du MVP :
+3 scénarios Cypress :
 
-- création de compte ;
-- authentification ;
-- upload ;
-- téléchargement ;
-- historique ;
-- suppression ;
-- validations métier et erreurs.
+- inscription → connexion → upload → lien
+- upload anonyme → téléchargement
+- upload → consultation → suppression
 
-## Tests end-to-end
+Résultat : 3 succès, 0 échec.
 
-Prévoir au moins 2 à 3 scénarios critiques avec Cypress ou équivalent.
+Commande utilisée (sur ARM) :
 
-Scénarios prévus :
-
-1. inscription → connexion → upload → récupération du lien ;
-2. téléchargement via lien valide ;
-3. consultation de l'historique → suppression d'un fichier.
-
-## Critères déjà validés
-- inscription valide ;
-- validations email / mot de passe ;
-- email déjà utilisé → 409 ;
-- login valide → JWT ;
-- mauvais identifiants → 401 ;
-- JWT stocké côté frontend ;
-- Bearer ajouté uniquement aux API internes protégées.
+    C:\Tools\node-x64\node-v24.19.0-win-x64\node.exe .\node_modules\cypress\bin\cypress run
 
 ## Couverture
 
-Objectif indicatif : **70 % minimum**.
+Objectif OpenClassrooms : 70 %.
 
-Une capture du rapport de couverture sera ajoutée avant livraison.
+- backend : 72,57 %
+- frontend : 74,29 %
+
+L'objectif est atteint.
+
+## Preuves
+
+### Couverture backend
+
+![Couverture backend](docs/evidence/testing/backend-coverage.png)
+
+### Couverture frontend
+
+![Couverture frontend](docs/evidence/testing/frontend-coverage.png)
+
+### Tests E2E
+
+![Tests Cypress](docs/evidence/testing/cypress-e2e.png)

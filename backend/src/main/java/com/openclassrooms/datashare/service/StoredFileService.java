@@ -91,6 +91,10 @@ public class StoredFileService  {
             throw new FileStorageException(
                     "Unable to persist uploaded file metadata", persistenceException);
         }
+        log.info("file_upload id={} size={} owner={}",
+                saved.getId(),
+                saved.getSize(),
+                owner != null ? owner.getId() : "anonymous");
 
         return new StoredFileUploadResponseDTO(
                 saved.getId(),
