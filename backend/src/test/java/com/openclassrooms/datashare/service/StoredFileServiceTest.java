@@ -17,8 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
-
 import org.springframework.web.multipart.MultipartFile;
 import com.openclassrooms.datashare.exception.FileTooLargeException;
 
@@ -42,9 +40,6 @@ class StoredFileServiceTest {
 
     @Mock
     private StoredFileRepository storedFileRepository;
-
-    @Mock
-    private StoredFileDtoMapper storedFileDtoMapper;
 
     @Mock
     private PasswordEncoder passwordEncoder;

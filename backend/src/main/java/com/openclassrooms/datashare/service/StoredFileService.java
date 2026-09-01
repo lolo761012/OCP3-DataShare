@@ -1,6 +1,5 @@
 package com.openclassrooms.datashare.service;
 
-import com.openclassrooms.datashare.dto.StoredFileDTO;
 import com.openclassrooms.datashare.dto.StoredFileListDTO;
 import com.openclassrooms.datashare.dto.StoredFileUploadResponseDTO;
 import com.openclassrooms.datashare.entities.StoredFile;
@@ -10,7 +9,6 @@ import com.openclassrooms.datashare.exception.FileStorageException;
 import com.openclassrooms.datashare.exception.FileTooLargeException;
 import com.openclassrooms.datashare.exception.InvalidOwnerException;
 import com.openclassrooms.datashare.handler.StoredFileNotFoundException;
-import com.openclassrooms.datashare.mapper.StoredFileDtoMapper;
 import com.openclassrooms.datashare.repository.StoredFileHistoryRepository;
 import com.openclassrooms.datashare.repository.StoredFileRepository;
 
@@ -46,7 +44,6 @@ public class StoredFileService  {
     );
 
     private final StoredFileRepository storedFileRepository;
-    private final StoredFileDtoMapper storedFileDtoMapper;
     private final PasswordEncoder passwordEncoder;
     private final StoredFileHistoryRepository storedFileHistoryRepository;
     private final StoredFilePurgeService storedFilePurgeService;
@@ -141,13 +138,6 @@ public class StoredFileService  {
                 Comparator.comparing(StoredFileListDTO::getUploadedAt).reversed()
         );
         return result;
-    }
-
-    public StoredFileDTO getStoredFileByToken(long id) {
-        StoredFile storedFile = storedFileRepository.findById(id)
-                .orElseThrow(() ->
-                        new StoredFileNotFoundException(id));
-        return storedFileDtoMapper.toDto(storedFile);
     }
 
     public void deleteStoredFile(Long fileId, Long ownerId) {
