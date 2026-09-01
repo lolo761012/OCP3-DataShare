@@ -52,10 +52,12 @@
             type="password"
             formControlName="password"
             placeholder="Optionnel"
-            [class.is-invalid]="submitted && form['password'].errors"
+            [class.is-invalid]="form['password'].dirty && form['password'].errors"
           />
-          @if (submitted && form['password'].errors?.['minlength']) {
-            <div class="field-error"><span>6 caractères minimum.</span></div>
+          @if (form['password'].dirty && form['password'].errors?.['minlength']) {
+          <div class="field-error">
+          <span>6 caractères minimum.</span>
+           </div>
           }
         </div>
 
