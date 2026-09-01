@@ -7,13 +7,12 @@ Application de partage temporaire et sécurisé de fichiers réalisée dans le c
 ## Stack technique
 
 
-- \*\*Frontend\*\* : Angular 22
-- \*\*Backend\*\* : Java 21 / Spring Boot 4.1
-- \*\*Base de données\*\* : PostgreSQL 16
-- \*\*Build backend\*\* : Maven Wrapper
-- \*\*Conteneurisation BDD\*\* : Docker Compose
-- \*\*Stockage des fichiers\*\* : système de fichiers local
-- \*\*Authentification\*\* : JWT
+- **Frontend** : Angular 22
+- **Backend** : Java 21 / Spring Boot 4.1
+- **Base de données** : PostgreSQL 16
+- **Base de données locale** : Docker Compose
+- **Stockage des fichiers** : système de fichiers local
+- **Authentification** : JWT
 
 
 ## Prérequis
@@ -30,7 +29,7 @@ Les outils suivants doivent être installés :
 - PowerShell
 
 
-Maven global n'est pas nécessaire pour le backend : le projet utilise le \*\*Maven Wrapper\*\* (`mvnw.cmd`).
+Le projet utilise le Maven Wrapper (`mvnw.cmd`), configuré avec Maven 3.9.16.
 
 
 ## Installation locale - Windows / PowerShell
@@ -56,9 +55,6 @@ cd frontend
 npm install
 cd ..
 ```
-Le script génère une clé aléatoire de 256 bits et renseigne automatiquement
-la variable JWT_SECRET dans .env.
-
 Le backend téléchargera automatiquement les dépendances Maven nécessaires lors du premier lancement.
 
 ### Configuration JWT
@@ -72,30 +68,18 @@ Générer ou renouveler le secret :
 .\scripts\generate-jwt-secret.ps1
 ```
 
-Le script génère une clé aléatoire de 256 bits et renseigne `JWT_SECRET`
-sans afficher la valeur.
+Le script génère une clé aléatoire de 256 bits et renseigne automatiquement `JWT_SECRET` dans le fichier `.env`, sans afficher le secret dans le terminal.
 
 Le backend charge `.env` via `spring.config.import`.
 
-La durée de validité du JWT est de 1 heure par défaut et peut être
-surchargée avec `JWT_EXPIRATION_MS`.
-```
+La durée de validité du JWT est de 1 heure par défaut.
+Elle peut être modifiée avec la variable `JWT_EXPIRATION_MS`, exprimée en millisecondes.
 
-Variables locales :
-
-```text
-DATASHARE_DB_NAME
-DATASHARE_DB_USER
-DATASHARE_DB_PASSWORD
-DATASHARE_STORAGE_PATH
-JWT_SECRET
-JWT_EXPIRATION_MS
-```
 
 ## Démarrage en développement
 
 
-### Méthode recommandée
+### Démarrage par script
 
 
 Depuis la racine du projet :
@@ -242,25 +226,32 @@ Les routes protégées utilisent :
 - Bearer valide → utilisateur authentifié ;
 - Bearer invalide → 401.
 
-## Configuration locale
 
+## Utilisation
 
-Le backend utilise les variables d'environnement suivantes, avec des valeurs locales par défaut :
+Une fois l'application démarrée, ouvrir :
 
+http://localhost:4200
+
+L'utilisateur peut :
+
+- créer un compte et se connecter ;
+- envoyer un fichier avec ou sans compte ;
+- choisir une durée d'expiration de 1 à 7 jours ;
+- protéger éventuellement le téléchargement par mot de passe ;
+- partager le lien de téléchargement généré ;
+- consulter et supprimer ses fichiers depuis son espace personnel.
+
+### Variables de configuration
 
 ```text
-DATASHARE\_DB\_NAME
-DATASHARE\_DB\_USER
-DATASHARE\_DB\_PASSWORD
-DATASHARE\_STORAGE\_PATH
+DATASHARE_DB_NAME
+DATASHARE_DB_USER
+DATASHARE_DB_PASSWORD
+DATASHARE_STORAGE_PATH
+JWT_SECRET
+JWT_EXPIRATION_MS
 ```
-
-
-Les secrets applicatifs ne doivent pas être versionnés dans Git.
-
-
-Les fichiers `.env` sont ignorés par le dépôt.
-
 
 ## Stockage local
 
@@ -274,6 +265,11 @@ storage/files/
 
 
 Le dossier est conservé dans Git grâce à `.gitkeep`, tandis que son contenu est ignoré.
+
+Les secrets applicatifs ne sont pas versionnés dans Git.
+
+Les fichiers `.env` sont ignorés par le dépôt.
+
 
 
 ## Structure principale
@@ -297,19 +293,15 @@ DataShare/
 
 ## Communication frontend / backend
 
+En développement, le frontend Angular fonctionne sur le port `4200` et le backend Spring Boot sur le port `8080`.
 
-En développement, Angular utilise un proxy vers le backend Spring Boot.
+Angular utilise un proxy local : les requêtes commençant par `/api` ou `/actuator` sont automatiquement transmises au backend.
 
-
-Le proxy permet notamment d'appeler :
-
+Par exemple :
 
 ```text
-/api/\*\*
-/actuator/\*\*
+/api/files → http://localhost:8080/api/files
 ```
-
-depuis le frontend sans configuration CORS spécifique pour le développement local.
 
 
 ## Tests
@@ -331,13 +323,11 @@ Les contrôles de sécurité, de performance et de maintenance sont documentés 
 
 ## Documentation
 
+La documentation de conception est disponible dans le dossier `docs/` :
 
-La documentation de conception est disponible dans le dossier `docs/`, notamment :
-
-- architecture de la solution ;
-- modèle de données ;
-- contrat d'API
-
+- [Architecture de la solution](docs/architecture/OCP3_ARCHITECTURE.md)
+- [Modèle de données](docs/data-model/OCP3_MCD.md)
+- [Contrat d'API](docs/api/OCP3_API_CONTRACT.md)
 
 ## État du projet
 
@@ -352,3 +342,15 @@ Fonctionnalités principales :
 - consultation des fichiers d'un utilisateur ;
 - suppression de fichier ;
 - expiration et purge automatique des fichiers.
+
+### Codes HTTP principaux
+
+- `200 OK` : requête réussie ;
+- `201 Created` : ressource créée avec succès ;
+- `204 No Content` : suppression réussie ;
+- `400 Bad Request` : données envoyées invalides ;
+- `401 Unauthorized` : authentification absente ou invalide ;
+- `403 Forbidden` : accès refusé ;
+- `404 Not Found` : ressource ou lien introuvable ;
+- `410 Gone` : lien de téléchargement expiré ;
+- `413 Payload Too Large` : fichier supérieur à la taille maximale autorisée.

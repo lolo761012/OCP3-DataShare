@@ -151,15 +151,16 @@ Réponse `200 OK` :
     "uploadedAt": "2026-08-15T12:00:00",
     "expiresAt": "2026-08-20T12:00:00",
     "status": "VALID",
-    "passwordProtected": true,
     "downloadToken": "a8f7b291..."
   }
 ]
 ```
 
-Le statut `VALID` / `EXPIRED` est calculé à partir de `expiresAt`.
-Les données `passwordProtected` et `downloadToken` permettent au front d'afficher
-l'état de protection et le bouton d'accès prévu dans la maquette.
+Le statut `VALID` correspond aux fichiers encore actifs.
+Le statut `EXPIRED` correspond aux entrées conservées dans l'historique après purge.
+
+Pour une entrée expirée, `id` et `downloadToken` peuvent être `null`.
+Pour un fichier actif, `downloadToken` permet au frontend d'accéder à la page de téléchargement.
 
 Erreurs principales :
 
@@ -258,8 +259,9 @@ Contenu binaire du fichier
 
 Le serveur fournit le type MIME et le nom du fichier dans les en-têtes HTTP appropriés.
 
+
 Erreurs principales :
 
-- `400 Bad Request` : mot de passe requis ou invalide
-- `404 Not Found` : token invalide ou fichier absent
+- `403 Forbidden` : mot de passe absent ou incorrect pour un fichier protégé
+- `404 Not Found` : token invalide
 - `410 Gone` : transfert expiré
