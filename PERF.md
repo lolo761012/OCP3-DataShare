@@ -38,21 +38,24 @@ file_upload id=8463 size=26 owner=anonymous
 
 ## Frontend
 
-La taille initiale du frontend Angular est de 340,56 kB, sous la limite d'avertissement fixée à 500 kB.
+La taille initiale du frontend Angular est de 340,81 kB, sous la limite d'avertissement fixée à 500 kB.
 
 ## Performance navigateur
 
 Test Lighthouse sur la page `/myspace` en local :
 
-- Performance : 59
+- Performance : 79
 - Accessibilité : 100
 - Bonnes pratiques : 100
 - SEO : 90
 
 ### Analyse et optimisations possibles
 
-Le test a été réalisé avec le serveur Angular de développement (`npm start`). Ce mode est prévu pour faciliter le développement et ajoute des traitements qui ne sont pas présents de la même manière dans une version destinée aux utilisateurs.
+Le premier test, réalisé avec la configuration Angular de développement, obtenait un score de performance de 59.
 
-Une première amélioration serait donc de tester la version compilée de l'application afin de mesurer les performances dans des conditions plus proches d'une utilisation réelle.
+Un second test a été réalisé avec Angular en configuration de production
+(`ng serve --configuration production`). Le score de performance est passé à 79.
+
+Un test sur une application réellement déployée permettrait d'obtenir une mesure encore plus représentative des conditions d'utilisation réelles.
 
 Si nécessaire, les éléments chargés par chaque page et les appels au backend pourraient ensuite être analysés pour identifier ce qui ralentit l'affichage.
