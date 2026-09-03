@@ -9,7 +9,7 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { HeaderComponent } from '../../shared/header/header.component';
@@ -35,6 +35,7 @@ export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
   private authApiService = inject(AuthApiService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   registerForm: FormGroup = this.formBuilder.group(
     {
@@ -47,7 +48,6 @@ export class RegisterComponent {
 
   submitted = false;
   loading = signal(false);
-  success = signal(false);
   errorMessage = signal('');
 
   get form() {
@@ -56,7 +56,6 @@ export class RegisterComponent {
 
   onSubmit(): void {
     this.submitted = true;
-    this.success.set(false);
     this.errorMessage.set('');
 
     if (this.registerForm.invalid) {
@@ -75,13 +74,14 @@ export class RegisterComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.success.set(true);
           this.registerForm.reset();
           this.submitted = false;
+          this.router.navigate(['/login'], {
+            state: { accountCreated: true }
+          });
         },
         error: (error) => {
           this.loading.set(false);
-          this.success.set(false);
           this.errorMessage.set(error.error?.message ?? 'Serveur indisponible.');
         }
       });

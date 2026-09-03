@@ -13,6 +13,7 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let router: Router;
   let registerMock: ReturnType<typeof vi.fn>;
+  let navigateSpy: ReturnType<typeof vi.spyOn>;
 
   const validEmail = 'user@example.com';
   const validPassword = 'password123';
@@ -36,6 +37,7 @@ describe('RegisterComponent', () => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   });
 
@@ -159,7 +161,6 @@ describe('RegisterComponent', () => {
     component.onSubmit();
 
     expect(component.loading()).toBe(false);
-    expect(component.success()).toBe(true);
     expect(component.errorMessage()).toBe('');
     expect(component.registerForm.get('email')?.value).toBeNull();
     expect(component.registerForm.get('password')?.value).toBeNull();
@@ -179,7 +180,6 @@ describe('RegisterComponent', () => {
     component.onSubmit();
 
     expect(component.loading()).toBe(false);
-    expect(component.success()).toBe(false);
     expect(component.errorMessage()).toBe('Email is already used');
   });
 
@@ -195,10 +195,7 @@ describe('RegisterComponent', () => {
     expect(component.errorMessage()).toBe('Serveur indisponible.');
   });
 
-  it('does not navigate automatically after successful registration', () => {
-    const navigateSpy = vi.spyOn(router, 'navigate');
-    const navigateByUrlSpy = vi.spyOn(router, 'navigateByUrl');
-
+  it('navigates to login after successful registration', () => {
     registerMock.mockReturnValue(
       of<RegisterResponse>({ id: 1, email: validEmail })
     );
@@ -206,7 +203,8 @@ describe('RegisterComponent', () => {
 
     component.onSubmit();
 
-    expect(navigateSpy).not.toHaveBeenCalled();
-    expect(navigateByUrlSpy).not.toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/login'], {
+      state: { accountCreated: true }
+    });
   });
 });

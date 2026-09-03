@@ -34,6 +34,9 @@ export class LoginComponent {
   loading = signal(false);
   success = signal(false);
   errorMessage = signal('');
+  accountCreated = signal(
+    window.history.state?.['accountCreated'] === true
+  );
 
   get form() {
     return this.loginForm.controls;
@@ -41,6 +44,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.submitted = true;
+    this.accountCreated.set(false);
     this.success.set(false);
     this.errorMessage.set('');
 

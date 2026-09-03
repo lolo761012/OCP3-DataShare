@@ -3,7 +3,11 @@
 <div class="page-content">
   <div class="auth-card">
     <h2>Connexion</h2>
-
+    @if (accountCreated()) {
+      <p class="status status-success">
+         Compte créé avec succès. Vous pouvez vous connecter.
+      </p>
+    }
     @if (loading()) {
       <p class="status status-loading">Connexion en cours...</p>
     }

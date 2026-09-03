@@ -7,9 +7,6 @@
     @if (loading()) {
       <p class="status status-loading">Création en cours...</p>
     }
-    @if (success()) {
-      <p class="status status-success">Compte créé avec succès. Vous pouvez vous connecter.</p>
-    }
     @if (errorMessage()) {
       <p class="status status-error">{{ errorMessage() }}</p>
     }
